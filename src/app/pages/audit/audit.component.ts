@@ -1,21 +1,10 @@
 import { Component } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
+import { BlockchainExplorerComponent } from './blockchain-explorer.component';
 
 @Component({
   selector: 'app-audit',
   standalone: true,
-  imports: [
-    MatCardModule,
-    MatTableModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatButtonModule,
-  ],
-  templateUrl: './audit.component.html',
-  styleUrl: './audit.component.scss',
+  imports: [BlockchainExplorerComponent],
+  template: `<app-blockchain-explorer></app-blockchain-explorer>`,
 })
 export class AuditComponent {}

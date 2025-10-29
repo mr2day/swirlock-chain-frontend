@@ -1,0 +1,201 @@
+<div class="explorer-container">
+  <div class="search-section">
+    <mat-card class="search-card">
+      <h2>Search & Filter</h2>
+
+      <div class="search-inputs">
+        <mat-form-field appearance="outline">
+          <mat-label>Search by Identity Hash</mat-label>
+          <input
+            matInput
+            placeholder="Enter identity hash"
+            [(ngModel)]="searchHash"
+            (keyup.enter)="searchIdentity()"
+          />
+          <mat-icon matSuffix>search</mat-icon>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="searchIdentity()"
+          [disabled]="!searchHash || isLoading"
+        >
+          Search
+        </button>
+
+        <button
+          mat-stroked-button
+          (click)="clearSearch()"
+          [disabled]="!searchHash && !searchResults"
+        >
+          Clear
+        </button>
+      </div>
+
+      <div class="chain-stats" *ngIf="chainStats && !searchResults">
+        <div class="stat">
+          <strong>Total Identities:</strong> {{ chainStats.totalIdentities }}
+        </div>
+        <div class="stat">
+          <strong>Total Events:</strong> {{ chainStats.totalEvents }}
+        </div>
+        <div class="stat">
+          <strong>Current Block Height:</strong> {{ chainHead?.height }}
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div class="loading" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading blockchain data...</p>
+  </div>
+
+  <div class="error" *ngIf="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-stroked-button (click)="clearError()">Dismiss</button>
+  </div>
+
+  <!-- Search Results -->
+  <div class="results-section" *ngIf="searchResults && !isLoading">
+    <mat-card class="results-card">
+      <h2>Identity Events: {{ searchHash | slice:0:16 }}...</h2>
+
+      <div class="event-count">
+        <strong>{{ searchResults.eventCount }}</strong> events found
+      </div>
+
+      <mat-accordion class="events-accordion">
+        <mat-expansion-panel
+          *ngFor="let event of searchResults.events; let i = index"
+        >
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              <span class="event-type" [class]="event.eventType">
+                {{ event.eventType | titlecase }}
+              </span>
+            </mat-panel-title>
+            <mat-panel-description>
+              v{{ event.version }} • {{ event.timestamp | date:'short' }}
+            </mat-panel-description>
+          </mat-expansion-panel-header>
+
+          <div class="event-details">
+            <div class="detail-row">
+              <span class="label">Event Type:</span>
+              <span class="value">{{ event.eventType }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Version:</span>
+              <span class="value">{{ event.version }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Timestamp:</span>
+              <span class="value">{{ event.timestamp | date:'medium' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="label">Current Hash:</span>
+              <span class="value hash">{{ event.currentHash }}</span>
+            </div>
+            <div class="detail-row" *ngIf="event.previousHash">
+              <span class="label">Previous Hash:</span>
+              <span class="value hash">{{ event.previousHash }}</span>
+            </div>
+            <div class="detail-row" *ngIf="event.metadata">
+              <span class="label">Metadata:</span>
+              <span class="value">{{ event.metadata }}</span>
+            </div>
+
+            <div class="event-meaning">
+              <mat-icon>info</mat-icon>
+              <p>{{ getEventExplanation(event.eventType) }}</p>
+            </div>
+          </div>
+        </mat-expansion-panel>
+      </mat-accordion>
+    </mat-card>
+  </div>
+
+  <!-- Chain Overview -->
+  <div class="chain-overview" *ngIf="!searchResults && !isLoading && chainHead">
+    <mat-card class="overview-card">
+      <h2>Blockchain Overview</h2>
+
+      <div class="block-grid">
+        <div class="block-item">
+          <mat-card class="block-card">
+            <mat-card-header>
+              <mat-card-title>Current Block</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="block-data">
+                <div class="data-row">
+                  <span class="label">Height:</span>
+                  <span class="value">{{ chainHead.height }}</span>
+                </div>
+                <div class="data-row">
+                  <span class="label">Hash:</span>
+                  <span class="value hash">{{ chainHead.hash | slice:0:20 }}...</span>
+                </div>
+                <div class="data-row">
+                  <span class="label">Prev Hash:</span>
+                  <span class="value hash">{{ chainHead.prevHash | slice:0:20 }}...</span>
+                </div>
+                <div class="data-row">
+                  <span class="label">Timestamp:</span>
+                  <span class="value">{{ chainHead.timestamp | date:'medium' }}</span>
+                </div>
+                <div class="data-row">
+                  <span class="label">Merkle Root:</span>
+                  <span class="value hash">{{ chainHead.merkleRoot | slice:0:20 }}...</span>
+                </div>
+              </div>
+
+              <div class="block-meaning">
+                <mat-icon>verified</mat-icon>
+                <p>
+                  This is the most recent block on the blockchain. All identity
+                  events up to this point have been cryptographically sealed
+                  and cannot be altered.
+                </p>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+
+        <div class="stats-item">
+          <mat-card class="stats-card">
+            <mat-card-header>
+              <mat-card-title>Blockchain Statistics</mat-card-title>
+            </mat-card-header>
+            <mat-card-content>
+              <div class="stat-item">
+                <div class="stat-number">{{ chainStats?.totalIdentities }}</div>
+                <div class="stat-label">Total Identities</div>
+              </div>
+              <div class="stat-item">
+                <div class="stat-number">{{ chainStats?.totalEvents }}</div>
+                <div class="stat-label">Total Events</div>
+              </div>
+              <div class="stat-item" *ngFor="let item of eventTypeStats">
+                <div class="stat-number">{{ item.count }}</div>
+                <div class="stat-label">{{ item.type | titlecase }}</div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <mat-icon>info</mat-icon>
+        <p>
+          Use the search box above to look up a specific identity hash and view
+          all events associated with it. This allows you to verify the complete
+          audit trail for any identity on the blockchain.
+        </p>
+      </div>
+    </mat-card>
+  </div>
+</div>
