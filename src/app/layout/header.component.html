@@ -1,0 +1,39 @@
+<mat-toolbar color="primary">
+  <div class="toolbar-content">
+    <div class="logo">
+      <h1>Swirlock Chain</h1>
+    </div>
+
+    <nav class="nav-links">
+      <a
+        mat-button
+        routerLink="/landing"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Landing
+      </a>
+      <a
+        mat-button
+        routerLink="/audit"
+        routerLinkActive="active"
+      >
+        Audit
+      </a>
+      <a
+        mat-button
+        routerLink="/documentation"
+        routerLinkActive="active"
+      >
+        Documentation
+      </a>
+      <a
+        mat-button
+        routerLink="/gdpr"
+        routerLinkActive="active"
+      >
+        GDPR & Privacy
+      </a>
+    </nav>
+  </div>
+</mat-toolbar>
