@@ -1,0 +1,88 @@
+<div class="blockchain-timeline-container">
+  <h2>Live Blockchain Timeline</h2>
+
+  <div class="loading" *ngIf="isLoading">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Fetching blockchain data...</p>
+  </div>
+
+  <div class="error" *ngIf="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="stats-summary" *ngIf="stats && !isLoading">
+    <div class="stat-box">
+      <h3>{{ stats.totalIdentities }}</h3>
+      <p>Identities Created</p>
+    </div>
+    <div class="stat-box">
+      <h3>{{ stats.totalEvents }}</h3>
+      <p>Events Recorded</p>
+    </div>
+    <div class="stat-box">
+      <h3>{{ blockHead?.height }}</h3>
+      <p>Current Block Height</p>
+    </div>
+  </div>
+
+  <div class="timeline" *ngIf="blockHead && !isLoading">
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="marker-dot"></div>
+      </div>
+      <div class="timeline-content">
+        <mat-card class="block-card">
+          <mat-card-header>
+            <div mat-card-avatar class="block-avatar">
+              <mat-icon>block</mat-icon>
+            </div>
+            <mat-card-title>Block #{{ blockHead.height }}</mat-card-title>
+            <mat-card-subtitle>Latest Block</mat-card-subtitle>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="block-info">
+              <div class="info-row">
+                <span class="info-label">Block Hash:</span>
+                <span class="info-value hash">{{ blockHead.hash | slice:0:16 }}...</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Previous Block:</span>
+                <span class="info-value hash">{{ blockHead.prevHash | slice:0:16 }}...</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Created:</span>
+                <span class="info-value">{{ blockHead.timestamp | date:'medium' }}</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Merkle Root:</span>
+                <span class="info-value hash">{{ blockHead.merkleRoot | slice:0:16 }}...</span>
+              </div>
+              <div class="info-row">
+                <span class="info-label">Proposer:</span>
+                <span class="info-value">{{ blockHead.proposerFp }}</span>
+              </div>
+            </div>
+
+            <div class="block-meaning">
+              <mat-icon>info</mat-icon>
+              <p>
+                This block is a cryptographic commitment to all identity events
+                recorded up to this point. The Merkle Root proves the integrity
+                of all transactions.
+              </p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-section" *ngIf="!isLoading">
+    <p>Want to verify the entire blockchain? Visit the</p>
+    <a mat-raised-button color="primary" routerLink="/audit">
+      Audit Page
+    </a>
+  </div>
+</div>

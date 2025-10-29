@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
+import { BlockchainTimelineComponent } from './blockchain-timeline.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [MatButtonModule, MatCardModule],
+  imports: [RouterLink, MatCardModule, BlockchainTimelineComponent],
   templateUrl: './landing.component.html',
   styleUrl: './landing.component.scss',
 })
