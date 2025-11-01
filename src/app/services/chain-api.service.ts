@@ -22,8 +22,7 @@ export interface IdentityStats {
   providedIn: 'root',
 })
 export class ChainApiService {
-  private readonly apiBaseUrl =
-    'https://swirlock-chain-backend-604848171249.europe-west1.run.app';
+  private readonly apiBaseUrl = 'https://chain.swirlock.com';
 
   constructor(private http: HttpClient) {}
 

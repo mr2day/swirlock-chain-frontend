@@ -105,9 +105,9 @@ Build artifacts are stored in the `dist/` directory with production optimization
 
 ## API Integration
 
-The frontend communicates with the Swirlock Chain backend deployed on Google Cloud Run:
+The frontend communicates with the Swirlock Chain backend:
 
-**Base URL**: `https://swirlock-chain-backend-604848171249.europe-west1.run.app`
+**Base URL**: `https://chain.swirlock.com`
 
 ### Endpoints Used
 
